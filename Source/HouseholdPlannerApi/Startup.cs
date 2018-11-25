@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HouseholdPlanner.Models.Options;
 using HouseholdPlannerApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -31,15 +32,26 @@ namespace HouseholdPlannerApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            var sendGridApiKey = Environment.GetEnvironmentVariable("HouseholdPlannerApiKeySendgrid");
             var key = Environment.GetEnvironmentVariable("HouseholdPlannerApiKey");
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
+
+            
+
 
             var jwtIssuerOptions = new JwtIssuerOptions();
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
             jwtAppSettingOptions.Bind(jwtIssuerOptions);
             jwtIssuerOptions.SigningCredentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
+
+            var emailOptions = new EmailOptions();
+            var emailAppSettingsOptions = Configuration.GetSection(nameof(EmailOptions));
+            emailAppSettingsOptions.Bind(emailOptions);
+            emailOptions.SendGridApiKey = sendGridApiKey;
+
             services.AddSingleton<JwtIssuerOptions>(jwtIssuerOptions);
+            services.AddSingleton<EmailOptions>(emailOptions);
 
             var tokenValidationParameters = new TokenValidationParameters
             {
