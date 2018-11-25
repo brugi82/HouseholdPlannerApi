@@ -16,4 +16,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HouseholdPlanner.Contracts\HouseholdPlanner.Contracts.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Models\HouseholdPlanner.Models.csproj" />
+  </ItemGroup>
+
 </Project>
