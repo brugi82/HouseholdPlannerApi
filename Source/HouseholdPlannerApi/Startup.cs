@@ -46,12 +46,15 @@ namespace HouseholdPlannerApi
 
 
             var emailOptions = new EmailOptions();
-            var emailAppSettingsOptions = Configuration.GetSection(nameof(EmailOptions));
-            emailAppSettingsOptions.Bind(emailOptions);
-            emailOptions.SendGridApiKey = sendGridApiKey;
+            Configuration.GetSection(nameof(EmailOptions)).Bind(emailOptions);
+
+            var sendGridOptions = new SendGridOptions();
+            Configuration.GetSection(nameof(SendGridOptions)).Bind(sendGridOptions);
+            sendGridOptions.SendGridApiKey = sendGridApiKey;
 
             services.AddSingleton<JwtIssuerOptions>(jwtIssuerOptions);
             services.AddSingleton<EmailOptions>(emailOptions);
+            services.AddSingleton<SendGridOptions>(sendGridOptions);
 
             var tokenValidationParameters = new TokenValidationParameters
             {
