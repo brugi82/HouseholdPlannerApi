@@ -1,0 +1,11 @@
+{
+  "personalizations": [ { "to": [ { "email": "__toEmail__" } ] } ],
+  "from": { "email": "__fromEmail__" },
+  "subject": "Confirm your email",
+  "content": [
+    {
+      "type": "text/html",
+      "value": "<h4>Confirm your email address and complete Household Planner registration by visiting <a href=\"__confirmEmailLink__\">this</a> link.</h4>"
+    }
+  ]
+}
