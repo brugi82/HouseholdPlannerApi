@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="EmailTemplates\register.json" />
+    <None Remove="EmailTemplates\welcome.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="EmailTemplates\register.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="EmailTemplates\welcome.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HouseholdPlanner.Contracts\HouseholdPlanner.Contracts.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Models\HouseholdPlanner.Models.csproj" />
+  </ItemGroup>
+
+</Project>

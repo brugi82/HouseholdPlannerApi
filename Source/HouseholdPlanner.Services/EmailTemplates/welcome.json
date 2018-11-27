@@ -1,0 +1,11 @@
+{
+  "personalizations": [ { "to": [ { "email": "__toEmail__" } ] } ],
+  "from": { "email": "__fromEmail__" },
+  "subject": "Welcome to Household Planner!",
+  "content": [
+    {
+      "type": "text/html",
+      "value": "<h1>__name__, welcome to Household Planner!</h1><br/><p><a href=\"https://www.google.com\">Log in</a> to start using our application.</p>"
+    }
+  ]
+}
