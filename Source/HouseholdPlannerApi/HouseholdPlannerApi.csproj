@@ -12,12 +12,16 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.0.2105168" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\HouseholdPlanner.Contracts\HouseholdPlanner.Contracts.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Data\HouseholdPlanner.Data.csproj" />
     <ProjectReference Include="..\HouseholdPlanner.Models\HouseholdPlanner.Models.csproj" />
   </ItemGroup>
 
