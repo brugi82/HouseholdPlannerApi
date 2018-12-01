@@ -36,10 +36,8 @@ namespace HouseholdPlannerApi
 
             var sendGridApiKey = Environment.GetEnvironmentVariable("HouseholdPlannerApiKeySendgrid");
             var key = Environment.GetEnvironmentVariable("HouseholdPlannerApiKey");
+            var sqlPassword = Environment.GetEnvironmentVariable("SqlServerPassword");
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
-
-            
-
 
             var jwtIssuerOptions = new JwtIssuerOptions();
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
@@ -92,9 +90,12 @@ namespace HouseholdPlannerApi
                 options.AddPolicy("ApiUser", policy => policy.RequireClaim(JwtConstants.JwtClaimIdentifiers.Rol, JwtConstants.JwtClaims.ApiAccess));
             });
 
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            connectionString = string.Format(connectionString, sqlPassword);
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
-                b => b.MigrationsAssembly("AngularASPNETCore2WebApiAuth")));
+                options.UseSqlServer(connectionString,
+                b => b.MigrationsAssembly("HouseholdPlanner.Data")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
