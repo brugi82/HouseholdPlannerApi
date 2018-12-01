@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Contracts"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Models", "HouseholdPlanner.Models\HouseholdPlanner.Models.csproj", "{9CBC23C7-1B35-43BD-9023-0BCB248BA4F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseholdPlanner.Services", "HouseholdPlanner.Services\HouseholdPlanner.Services.csproj", "{AB0A0297-FAEA-4302-B8FC-CF1828EC948B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Services", "HouseholdPlanner.Services\HouseholdPlanner.Services.csproj", "{AB0A0297-FAEA-4302-B8FC-CF1828EC948B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseholdPlanner.Data", "HouseholdPlanner.Data\HouseholdPlanner.Data.csproj", "{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AB0A0297-FAEA-4302-B8FC-CF1828EC948B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB0A0297-FAEA-4302-B8FC-CF1828EC948B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB0A0297-FAEA-4302-B8FC-CF1828EC948B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

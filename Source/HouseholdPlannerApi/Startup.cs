@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HouseholdPlanner.Data.Infrastructure;
 using HouseholdPlanner.Models.Options;
 using HouseholdPlannerApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,10 +36,8 @@ namespace HouseholdPlannerApi
 
             var sendGridApiKey = Environment.GetEnvironmentVariable("HouseholdPlannerApiKeySendgrid");
             var key = Environment.GetEnvironmentVariable("HouseholdPlannerApiKey");
+            var sqlPassword = Environment.GetEnvironmentVariable("SqlServerPassword");
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
-
-            
-
 
             var jwtIssuerOptions = new JwtIssuerOptions();
             var jwtAppSettingOptions = Configuration.GetSection(nameof(JwtIssuerOptions));
@@ -89,6 +89,13 @@ namespace HouseholdPlannerApi
             {
                 options.AddPolicy("ApiUser", policy => policy.RequireClaim(JwtConstants.JwtClaimIdentifiers.Rol, JwtConstants.JwtClaims.ApiAccess));
             });
+
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            connectionString = string.Format(connectionString, sqlPassword);
+
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(connectionString,
+                b => b.MigrationsAssembly("HouseholdPlanner.Data")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
