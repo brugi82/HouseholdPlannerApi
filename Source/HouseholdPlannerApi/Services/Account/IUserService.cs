@@ -10,5 +10,6 @@ namespace HouseholdPlannerApi.Services.Account
     public interface IUserService
     {
         Task RegisterUser(RegistrationModel registrationModel);
+		Task ConfirmEmail(string userId, string token);
     }
 }

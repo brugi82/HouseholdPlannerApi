@@ -44,7 +44,7 @@ namespace HouseholdPlanner.Services.Notification
             var emailContents = await _fileService.GetFileContentAsync(System.IO.Path.Combine(EmailTemplates, _emailOptions.RegisterTemplateName));
             emailContents = emailContents.Replace("__toEmail__", to);
             emailContents = emailContents.Replace("__fromEmail__", _emailOptions.FromEmail);
-            emailContents = emailContents.Replace("__confirmEmailLink__", registrationLink);
+            emailContents = emailContents.Replace("__confirmEmailLink__", System.Web.HttpUtility.UrlEncode(registrationLink));
             return emailContents;
         }
 

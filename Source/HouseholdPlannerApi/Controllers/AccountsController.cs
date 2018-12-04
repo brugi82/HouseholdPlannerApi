@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace HouseholdPlannerApi.Controllers
 {
@@ -44,10 +45,23 @@ namespace HouseholdPlannerApi.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<IActionResult> ConfirmEmail()
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail([Bind(Prefix ="i")] string userId, [Bind(Prefix = "o")] string token)
         {
-            return Ok("Conf");
+			if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
+				return BadRequest();
+
+			try
+			{
+				await _userService.ConfirmEmail(userId, HttpUtility.UrlDecode(token));
+
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return BadRequest();
+			}
         }
     }
 }
