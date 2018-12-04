@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using HouseholdPlannerApi.Models;
+using HouseholdPlannerApi.Services;
+using HouseholdPlannerApi.Services.Account;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +15,33 @@ namespace HouseholdPlannerApi.Controllers
     [ApiController]
     public class AccountsController:ControllerBase
     {
-        public AccountsController()
-        {
+        private readonly IUserService _userService;
+        private readonly ILogger<AccountsController> _logger;
 
+        public AccountsController(IUserService userService, ILogger<AccountsController> logger)
+        {
+            _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         [HttpPost]
-        public async Task<IActionResult> RegisterUser([FromBody] RegistrationModel registrationModel)
+        public async Task<IActionResult> RegisterUser([FromBody]RegistrationModel registrationModel)
         {
-            return Ok("Reg");
+            if (string.IsNullOrEmpty(registrationModel.FirstName) || string.IsNullOrEmpty(registrationModel.Username) ||
+                string.IsNullOrEmpty(registrationModel.Password))
+                return BadRequest();
+
+            try
+            {
+                await _userService.RegisterUser(registrationModel);
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
 
         [HttpPost]
