@@ -50,7 +50,9 @@ namespace HouseholdPlannerApi.Services.Account
 			if (user != null)
 			{
 				var confirmEmailResult = await _userManager.ConfirmEmailAsync(user, token);
-				if (!confirmEmailResult.Succeeded)
+				if (confirmEmailResult.Succeeded)
+					await _emailService.SendWelcomeEmail(user.Email, user.FirstName);
+				else
 					ProcessErrors(nameof(ConfirmEmail), confirmEmailResult);
 			}
 			else
