@@ -1,4 +1,5 @@
 ﻿using HouseholdPlanner.Contracts.Notification;
+using HouseholdPlanner.Contracts.Security;
 using HouseholdPlanner.Data.Models;
 using HouseholdPlanner.Models.Options;
 using HouseholdPlannerApi.Models;
@@ -15,14 +16,16 @@ namespace HouseholdPlannerApi.Services.Account
     public class UserService: IUserService
     {
         private readonly ILogger<UserService> _logger;
+        private readonly ITokenFactory _tokenFactory;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
 		private readonly ApplicationSettings _applicationSettings;
 
-		public UserService(UserManager<ApplicationUser> userManager, IEmailService emailService, ApplicationSettings applicationSettings,
-			ILogger<UserService> logger)
+		public UserService(UserManager<ApplicationUser> userManager, IEmailService emailService, ITokenFactory tokenFactory,
+            ApplicationSettings applicationSettings, ILogger<UserService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _tokenFactory = tokenFactory ?? throw new ArgumentNullException(nameof(tokenFactory));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 			_applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
@@ -58,6 +61,28 @@ namespace HouseholdPlannerApi.Services.Account
 			else
 				ProcessErrors("", IdentityResult.Failed(new IdentityError() { Description = $"Unable to confirm email. User with id {userId} not found." }));
 		}
+
+        public async Task<string> GetAccessToken(LoginModel loginModel)
+        {
+            if (loginModel == null)
+                throw new ArgumentNullException(nameof(loginModel));
+            if (string.IsNullOrEmpty(loginModel.Username))
+                throw new ArgumentNullException(nameof(loginModel.Username));
+            if (string.IsNullOrEmpty(loginModel.Password))
+                throw new ArgumentNullException(nameof(loginModel.Password));
+
+            var user = await _userManager.FindByEmailAsync(loginModel.Username);
+            if (user != null)
+            {
+                var validCredentials = await _userManager.CheckPasswordAsync(user, loginModel.Password);
+                if (validCredentials)
+                    return _tokenFactory.GenerateJwtToken(user.Email, user.Id);
+                else
+                    throw new ArgumentException("Invalid username or password.");
+            }
+            else
+                throw new ArgumentException("Invalid username or password.");
+        }
 
         private ApplicationUser MapToNewUser(RegistrationModel registrationModel)
         {

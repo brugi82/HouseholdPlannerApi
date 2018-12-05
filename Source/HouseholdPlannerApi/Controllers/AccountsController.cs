@@ -1,4 +1,5 @@
-﻿using HouseholdPlannerApi.Models;
+﻿using HouseholdPlanner.Contracts.Security;
+using HouseholdPlannerApi.Models;
 using HouseholdPlannerApi.Services;
 using HouseholdPlannerApi.Services.Account;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,13 @@ namespace HouseholdPlannerApi.Controllers
     public class AccountsController:ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITokenFactory _tokenFactory;
         private readonly ILogger<AccountsController> _logger;
 
-        public AccountsController(IUserService userService, ILogger<AccountsController> logger)
+        public AccountsController(IUserService userService, ITokenFactory tokenFactory, ILogger<AccountsController> logger)
         {
             _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+            _tokenFactory = tokenFactory ?? throw new ArgumentNullException(nameof(tokenFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -62,6 +65,22 @@ namespace HouseholdPlannerApi.Controllers
 				_logger.LogError(ex.Message);
 				return BadRequest();
 			}
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginModel loginModel)
+        {
+            try
+            {
+                var accessToken = await _userService.GetAccessToken(loginModel);
+
+                return Ok(accessToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest();
+            }
         }
     }
 }
