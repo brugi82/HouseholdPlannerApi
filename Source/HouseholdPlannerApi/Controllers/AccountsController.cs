@@ -31,10 +31,6 @@ namespace HouseholdPlannerApi.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody]RegistrationModel registrationModel)
         {
-            if (string.IsNullOrEmpty(registrationModel.FirstName) || string.IsNullOrEmpty(registrationModel.Username) ||
-                string.IsNullOrEmpty(registrationModel.Password))
-                return BadRequest();
-
             try
             {
                 await _userService.RegisterUser(registrationModel);
@@ -51,9 +47,6 @@ namespace HouseholdPlannerApi.Controllers
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail([Bind(Prefix ="i")] string userId, [Bind(Prefix = "o")] string token)
         {
-			if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(token))
-				return BadRequest();
-
 			try
 			{
 				await _userService.ConfirmEmail(userId, HttpUtility.UrlDecode(token));

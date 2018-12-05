@@ -31,8 +31,20 @@ namespace HouseholdPlannerApi.Services.Account
 			_applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
         }
 
-        public async Task RegisterUser(RegistrationModel registrationModel)
+        public Task RegisterUser(RegistrationModel registrationModel)
         {
+			if (string.IsNullOrEmpty(registrationModel.FirstName))
+				throw new ArgumentNullException(nameof(registrationModel.FirstName));
+			if(string.IsNullOrEmpty(registrationModel.Username))
+				throw new ArgumentNullException(nameof(registrationModel.Username));
+			if(string.IsNullOrEmpty(registrationModel.Password))
+				throw new ArgumentNullException(nameof(registrationModel.Password));
+
+			return RegisterUserAsync(registrationModel);
+        }
+
+		private async Task RegisterUserAsync(RegistrationModel registrationModel)
+		{
 			var createResult = IdentityResult.Success;
 			var user = await _userManager.FindByEmailAsync(registrationModel.Username);
 			if (user == null)
@@ -41,13 +53,23 @@ namespace HouseholdPlannerApi.Services.Account
 				createResult = await _userManager.CreateAsync(user, registrationModel.Password);
 			}
 
-            if (createResult.Succeeded)
-                await SendConfirmationEmail(user);
-            else
-                ProcessErrors(nameof(RegisterUser), createResult);
-        }
+			if (createResult.Succeeded)
+				await SendConfirmationEmail(user);
+			else
+				ProcessErrors(nameof(RegisterUser), createResult);
+		}
 
-		public async Task ConfirmEmail(string userId, string token)
+		public Task ConfirmEmail(string userId, string token)
+		{
+			if (string.IsNullOrEmpty(userId))
+				throw new ArgumentNullException(nameof(userId));
+			if (string.IsNullOrEmpty(token))
+				throw new ArgumentNullException(nameof(token));
+
+			return ConfirmEmailAsync(userId, token);
+		}
+
+		private async Task ConfirmEmailAsync(string userId, string token)
 		{
 			var user = await _userManager.FindByIdAsync(userId);
 			if (user != null)
@@ -62,7 +84,7 @@ namespace HouseholdPlannerApi.Services.Account
 				ProcessErrors("", IdentityResult.Failed(new IdentityError() { Description = $"Unable to confirm email. User with id {userId} not found." }));
 		}
 
-        public async Task<string> GetAccessToken(LoginModel loginModel)
+        public Task<string> GetAccessToken(LoginModel loginModel)
         {
             if (loginModel == null)
                 throw new ArgumentNullException(nameof(loginModel));
@@ -71,18 +93,23 @@ namespace HouseholdPlannerApi.Services.Account
             if (string.IsNullOrEmpty(loginModel.Password))
                 throw new ArgumentNullException(nameof(loginModel.Password));
 
-            var user = await _userManager.FindByEmailAsync(loginModel.Username);
-            if (user != null)
-            {
-                var validCredentials = await _userManager.CheckPasswordAsync(user, loginModel.Password);
-                if (validCredentials)
-                    return _tokenFactory.GenerateJwtToken(user.Email, user.Id);
-                else
-                    throw new ArgumentException("Invalid username or password.");
-            }
-            else
-                throw new ArgumentException("Invalid username or password.");
+			return GetAccessTokenAsync(loginModel);
         }
+
+		private async Task<string> GetAccessTokenAsync(LoginModel loginModel)
+		{
+			var user = await _userManager.FindByEmailAsync(loginModel.Username);
+			if (user != null)
+			{
+				var validCredentials = await _userManager.CheckPasswordAsync(user, loginModel.Password);
+				if (validCredentials)
+					return _tokenFactory.GenerateJwtToken(user.Email, user.Id);
+				else
+					throw new ArgumentException("Invalid username or password.");
+			}
+			else
+				throw new ArgumentException("Invalid username or password.");
+		}
 
         private ApplicationUser MapToNewUser(RegistrationModel registrationModel)
         {
