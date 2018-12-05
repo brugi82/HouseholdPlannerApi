@@ -52,9 +52,13 @@ namespace HouseholdPlannerApi
             Configuration.GetSection(nameof(SendGridOptions)).Bind(sendGridOptions);
             sendGridOptions.SendGridApiKey = sendGridApiKey;
 
+			var applicationSettings = new ApplicationSettings();
+			Configuration.GetSection(nameof(ApplicationSettings)).Bind(applicationSettings);
+
             services.AddSingleton<JwtIssuerOptions>(jwtIssuerOptions);
             services.AddSingleton<EmailOptions>(emailOptions);
             services.AddSingleton<SendGridOptions>(sendGridOptions);
+			services.AddSingleton<ApplicationSettings>(applicationSettings);
 
             var tokenValidationParameters = new TokenValidationParameters
             {
