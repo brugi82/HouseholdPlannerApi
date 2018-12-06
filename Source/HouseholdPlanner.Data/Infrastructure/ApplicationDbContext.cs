@@ -16,6 +16,6 @@ namespace HouseholdPlanner.Data.Infrastructure
         {
         }
 
-        //public DbSet<Customer> Customers { get; set; }
+        public DbSet<Family> Families { get; set; }
     }
 }
