@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HouseholdPlanner.Data.Infrastructure;
+using HouseholdPlanner.Data.EntityFramework.Infrastructure;
 using HouseholdPlanner.Models.Options;
 using HouseholdPlannerApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -99,7 +99,7 @@ namespace HouseholdPlannerApi
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString,
-                b => b.MigrationsAssembly("HouseholdPlanner.Data")));
+                b => b.MigrationsAssembly("HouseholdPlanner.Data.EntityFramework")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

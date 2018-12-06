@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Models", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Services", "HouseholdPlanner.Services\HouseholdPlanner.Services.csproj", "{AB0A0297-FAEA-4302-B8FC-CF1828EC948B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseholdPlanner.Data", "HouseholdPlanner.Data\HouseholdPlanner.Data.csproj", "{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Data.EntityFramework", "HouseholdPlanner.Data\HouseholdPlanner.Data.EntityFramework.csproj", "{2AF3E3C7-E604-4568-B1E5-904BAA1261A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
