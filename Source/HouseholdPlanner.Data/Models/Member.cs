@@ -12,6 +12,7 @@ namespace HouseholdPlanner.Data.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
+		public string FamilyId { get; set; }
         public Family Family { get; set; }
     }
 }

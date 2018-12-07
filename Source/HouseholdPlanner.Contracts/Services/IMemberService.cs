@@ -9,8 +9,8 @@ namespace HouseholdPlanner.Contracts.Services
 {
     public interface IMemberService
     {
-        void Add(Member member);
-        void Add(string id, string firstName, string lastName);
+        Task Add(Member member);
+        Task Add(string id, string firstName, string lastName);
         Task<Member> Get(string id);
     }
 }

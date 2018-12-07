@@ -10,13 +10,16 @@ namespace HouseholdPlanner.Data.EntityFramework.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IRepositoryFactory _repositoryFactory;
+		private readonly ApplicationDbContext _dbContext;
 
-        public UnitOfWork(IRepositoryFactory repositoryFactory, ApplicationDbContext applicationDbContext)
+		public UnitOfWork(IRepositoryFactory repositoryFactory, IDbContextFactory<ApplicationDbContext> dbContextFactory)
         {
-            _dbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
+            _dbContextFactory = dbContextFactory ?? throw new ArgumentNullException(nameof(dbContextFactory));
             _repositoryFactory = repositoryFactory ?? throw new ArgumentNullException(nameof(repositoryFactory));
+
+			_dbContext = _dbContextFactory.Create();
 
             MemberRepository = _repositoryFactory.CreateRepository<IMemberRepository>(new object[] { _dbContext });
             FamilyRepository = _repositoryFactory.CreateRepository<IFamilyRepository>(new object[] { _dbContext });
@@ -29,7 +32,7 @@ namespace HouseholdPlanner.Data.EntityFramework.Repositories
 
         public void Dispose()
         {
-            _dbContext.Dispose();
+			_dbContext.Dispose();
         }
 
         public async Task SaveAsync()

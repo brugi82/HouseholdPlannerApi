@@ -27,6 +27,7 @@
     <ProjectReference Include="..\HouseholdPlanner.Contracts\HouseholdPlanner.Contracts.csproj" />
     <ProjectReference Include="..\HouseholdPlanner.Data.EntityFramework\HouseholdPlanner.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\HouseholdPlanner.Models\HouseholdPlanner.Models.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Services\HouseholdPlanner.Services.csproj" />
   </ItemGroup>
 
 </Project>
