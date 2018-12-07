@@ -1,6 +1,6 @@
 ﻿using HouseholdPlanner.Contracts.Notification;
 using HouseholdPlanner.Contracts.Security;
-using HouseholdPlanner.Data.Models;
+using HouseholdPlanner.Data.EntityFramework.Models;
 using HouseholdPlanner.Models.Options;
 using HouseholdPlannerApi.Models;
 using Microsoft.AspNetCore.Identity;

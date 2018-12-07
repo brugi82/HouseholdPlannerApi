@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace HouseholdPlanner.Data.Migrations
+namespace HouseholdPlanner.Data.EntityFramework.Migrations
 {
     public partial class initial : Migration
     {

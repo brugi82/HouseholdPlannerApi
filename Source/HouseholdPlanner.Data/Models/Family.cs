@@ -12,6 +12,6 @@ namespace HouseholdPlanner.Data.Models
 		public string Name { get; set; }
 		public string Description { get; set; }
 
-		public ICollection<ApplicationUser> Members { get; set; }
+		public ICollection<Member> Members { get; set; }
 	}
 }

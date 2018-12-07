@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Services",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HouseholdPlanner.Data.EntityFramework", "HouseholdPlanner.Data.EntityFramework\HouseholdPlanner.Data.EntityFramework.csproj", "{7BB82F44-2237-44FC-B1C1-37942BEEBED9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HouseholdPlanner.Data", "HouseholdPlanner.Data\HouseholdPlanner.Data.csproj", "{C46EB1B9-A58A-4AEE-B460-790C34722873}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{7BB82F44-2237-44FC-B1C1-37942BEEBED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BB82F44-2237-44FC-B1C1-37942BEEBED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BB82F44-2237-44FC-B1C1-37942BEEBED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C46EB1B9-A58A-4AEE-B460-790C34722873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C46EB1B9-A58A-4AEE-B460-790C34722873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C46EB1B9-A58A-4AEE-B460-790C34722873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C46EB1B9-A58A-4AEE-B460-790C34722873}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

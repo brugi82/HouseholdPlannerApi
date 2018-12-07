@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace HouseholdPlanner.Data.Migrations
+namespace HouseholdPlanner.Data.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20181201033529_initial")]

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HouseholdPlanner.Data.Models
+namespace HouseholdPlanner.Data.EntityFramework.Models
 {
     public class ApplicationUser : IdentityUser
     {

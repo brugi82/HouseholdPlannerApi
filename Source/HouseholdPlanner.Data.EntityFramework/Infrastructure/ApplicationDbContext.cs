@@ -1,4 +1,5 @@
-﻿using HouseholdPlanner.Data.Models;
+﻿using HouseholdPlanner.Data.EntityFramework.Models;
+using HouseholdPlanner.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,5 +18,6 @@ namespace HouseholdPlanner.Data.EntityFramework.Infrastructure
         }
 
         public DbSet<Family> Families { get; set; }
+        public DbSet<Member> Members { get; set; }
     }
 }
