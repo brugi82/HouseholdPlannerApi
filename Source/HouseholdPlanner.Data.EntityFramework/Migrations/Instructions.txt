@@ -1,0 +1,7 @@
+﻿#From solution root
+
+#To create migration (InitialModel is migration name)
+dotnet ef migrations add InitialModel --project HouseholdPlanner.Data.EntityFramework --startup-project HouseholdPlannerApi
+
+#To update database
+dotnet ef database update --project HouseholdPlanner.Data.EntityFramework --startup-project HouseholdPlannerApi
