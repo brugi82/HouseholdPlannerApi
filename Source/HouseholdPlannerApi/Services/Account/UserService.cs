@@ -1,6 +1,7 @@
 ﻿using HouseholdPlanner.Contracts.Notification;
 using HouseholdPlanner.Contracts.Security;
-using HouseholdPlanner.Data.Models;
+using HouseholdPlanner.Contracts.Services;
+using HouseholdPlanner.Data.EntityFramework.Models;
 using HouseholdPlanner.Models.Options;
 using HouseholdPlannerApi.Models;
 using Microsoft.AspNetCore.Identity;
@@ -20,15 +21,17 @@ namespace HouseholdPlannerApi.Services.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
 		private readonly ApplicationSettings _applicationSettings;
+		private readonly IMemberService _memberService;
 
 		public UserService(UserManager<ApplicationUser> userManager, IEmailService emailService, ITokenFactory tokenFactory,
-            ApplicationSettings applicationSettings, ILogger<UserService> logger)
+            IMemberService memberService, ApplicationSettings applicationSettings, ILogger<UserService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tokenFactory = tokenFactory ?? throw new ArgumentNullException(nameof(tokenFactory));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
 			_applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
+			_memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
         }
 
         public Task RegisterUser(RegistrationModel registrationModel)
@@ -76,7 +79,10 @@ namespace HouseholdPlannerApi.Services.Account
 			{
 				var confirmEmailResult = await _userManager.ConfirmEmailAsync(user, token);
 				if (confirmEmailResult.Succeeded)
+				{
+					await _memberService.Add(user.Id, user.FirstName, user.LastName);
 					await _emailService.SendWelcomeEmail(user.Email, user.FirstName);
+				}
 				else
 					ProcessErrors(nameof(ConfirmEmail), confirmEmailResult);
 			}

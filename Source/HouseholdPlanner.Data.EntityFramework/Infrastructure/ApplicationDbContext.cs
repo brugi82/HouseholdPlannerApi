@@ -1,4 +1,5 @@
-﻿using HouseholdPlanner.Data.Models;
+﻿using HouseholdPlanner.Data.EntityFramework.Models;
+using HouseholdPlanner.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -7,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HouseholdPlanner.Data.Infrastructure
+namespace HouseholdPlanner.Data.EntityFramework.Infrastructure
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -16,6 +17,7 @@ namespace HouseholdPlanner.Data.Infrastructure
         {
         }
 
-        //public DbSet<Customer> Customers { get; set; }
+        public DbSet<Family> Families { get; set; }
+        public DbSet<Member> Members { get; set; }
     }
 }

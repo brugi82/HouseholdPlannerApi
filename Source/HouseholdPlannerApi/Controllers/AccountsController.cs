@@ -31,6 +31,9 @@ namespace HouseholdPlannerApi.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody]RegistrationModel registrationModel)
         {
+			if (registrationModel == null)
+				return BadRequest();
+
             try
             {
                 await _userService.RegisterUser(registrationModel);

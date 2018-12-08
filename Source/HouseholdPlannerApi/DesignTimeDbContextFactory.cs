@@ -1,4 +1,4 @@
-﻿using HouseholdPlanner.Data.Infrastructure;
+﻿using HouseholdPlanner.Data.EntityFramework.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;

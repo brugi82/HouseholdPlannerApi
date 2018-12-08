@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <UserSecretsId>d9184073-eaa7-4a6c-a050-7630f128f986</UserSecretsId>
   </PropertyGroup>
@@ -12,11 +12,11 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.1.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.1.6" />
-    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.4">
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
@@ -25,8 +25,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HouseholdPlanner.Contracts\HouseholdPlanner.Contracts.csproj" />
-    <ProjectReference Include="..\HouseholdPlanner.Data\HouseholdPlanner.Data.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Data.EntityFramework\HouseholdPlanner.Data.EntityFramework.csproj" />
     <ProjectReference Include="..\HouseholdPlanner.Models\HouseholdPlanner.Models.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Services\HouseholdPlanner.Services.csproj" />
   </ItemGroup>
 
 </Project>

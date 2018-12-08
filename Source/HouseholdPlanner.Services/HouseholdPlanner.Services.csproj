@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\HouseholdPlanner.Contracts\HouseholdPlanner.Contracts.csproj" />
+    <ProjectReference Include="..\HouseholdPlanner.Data\HouseholdPlanner.Data.csproj" />
     <ProjectReference Include="..\HouseholdPlanner.Models\HouseholdPlanner.Models.csproj" />
   </ItemGroup>
 

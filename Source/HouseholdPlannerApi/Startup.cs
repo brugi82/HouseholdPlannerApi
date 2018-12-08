@@ -1,10 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using HouseholdPlanner.Data.Infrastructure;
+using HouseholdPlanner.Contracts.Common;
+using HouseholdPlanner.Contracts.Notification;
+using HouseholdPlanner.Contracts.Security;
+using HouseholdPlanner.Contracts.Services;
+using HouseholdPlanner.Data.Contracts;
+using HouseholdPlanner.Data.EntityFramework.Infrastructure;
+using HouseholdPlanner.Data.EntityFramework.Repositories;
 using HouseholdPlanner.Models.Options;
+using HouseholdPlanner.Services;
+using HouseholdPlanner.Services.Common;
+using HouseholdPlanner.Services.Notification;
+using HouseholdPlannerApi.Services.Account;
 using HouseholdPlannerApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -60,6 +71,18 @@ namespace HouseholdPlannerApi
             services.AddSingleton<SendGridOptions>(sendGridOptions);
 			services.AddSingleton<ApplicationSettings>(applicationSettings);
 
+			var httpClient = new HttpClient();
+			services.AddSingleton<HttpClient>(httpClient);
+
+			services.AddTransient<IRepositoryFactory, RepositoryFactory>();
+			services.AddTransient<IUnitOfWorkFactory, UnitOfWorkFactory>();
+			services.AddTransient<IFamilyService, FamilyService>();
+			services.AddTransient<IMemberService, MemberService>();
+			services.AddTransient<IFileService, FileService>();
+			services.AddTransient<IEmailService, SendGridEmailService>();
+			services.AddTransient<ITokenFactory, TokenFactory>();
+			services.AddTransient<IUserService, UserService>();
+
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -99,8 +122,11 @@ namespace HouseholdPlannerApi
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString,
-                b => b.MigrationsAssembly("HouseholdPlanner.Data")));
-        }
+                b => b.MigrationsAssembly("HouseholdPlanner.Data.EntityFramework")));
+
+			var contextFactory = new DbContextFactory(connectionString);
+			services.AddSingleton<IDbContextFactory<ApplicationDbContext>>(contextFactory);
+		}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
