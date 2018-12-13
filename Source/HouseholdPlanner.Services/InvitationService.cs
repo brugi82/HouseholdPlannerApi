@@ -39,7 +39,31 @@ namespace HouseholdPlanner.Services
 
         private async Task SendInvitationAsync(string email, string firstName, string inviterId, string familyId)
         {
+			try
+			{
+				using (var unitOfWork = _unitOfWorkFactory.Create())
+				{
+					var family = await unitOfWork.FamilyRepository.GetAsync(familyId) ?? throw new ArgumentException(nameof(familyId));
+					var inviter = await unitOfWork.MemberRepository.GetAsync(inviterId) ?? throw new ArgumentException(nameof(inviterId));
 
+					var invitation = new Data.Models.Invitation()
+					{
+						Email = email,
+						FirstName = firstName,
+						Family = family,
+						Member = inviter
+					};
+
+					unitOfWork.InvitationRepository.Add(invitation);
+
+					await unitOfWork.SaveAsync();
+				}
+			}
+			catch(Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				throw;
+			}
         }
     }
 }
