@@ -48,13 +48,14 @@ namespace HouseholdPlannerApi.Controllers
         }
 
 		[HttpPost]
-		public async Task<IActionResult> RegisterInvitedUser([FromBody]RegistrationModel registrationModel)
+		public async Task<IActionResult> RegisterInvitedUser([FromBody]RegisterInvitationModel registerInvitationModel)
 		{
-			if (registrationModel == null)
+			if (registerInvitationModel == null)
 				return BadRequest();
 
 			try
 			{
+				await _userService.RegisterInvitedUser(registerInvitationModel);
 
 				return Ok();
 			}
