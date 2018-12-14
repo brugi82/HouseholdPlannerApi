@@ -1,6 +1,7 @@
 ﻿using HouseholdPlanner.Contracts.Notification;
 using HouseholdPlanner.Contracts.Services;
 using HouseholdPlanner.Data.Contracts;
+using HouseholdPlanner.Models.Options;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -14,16 +15,19 @@ namespace HouseholdPlanner.Services
     {
         private readonly IUnitOfWorkFactory _unitOfWorkFactory;
         private readonly IEmailService _emailService;
-        private readonly ILogger<InvitationService> _logger;
+		private readonly ApplicationSettings _applicationSettings;
+		private readonly ILogger<InvitationService> _logger;
 
-        public InvitationService(IUnitOfWorkFactory unitOfWorkFactory, IEmailService emailService, ILogger<InvitationService> logger)
+        public InvitationService(IUnitOfWorkFactory unitOfWorkFactory, IEmailService emailService, ApplicationSettings applicationSettings,
+			ILogger<InvitationService> logger)
         {
             _unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+			_applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task SendInvitation(string email, string firstName, string inviterId, string familyId)
+        public Task SendInvitation(string email, string firstName, string inviterId)
         {
             if (string.IsNullOrEmpty(email))
                 throw new ArgumentNullException(nameof(email));
@@ -31,20 +35,18 @@ namespace HouseholdPlanner.Services
                 throw new ArgumentNullException(nameof(firstName));
             if (string.IsNullOrEmpty(inviterId))
                 throw new ArgumentNullException(nameof(inviterId));
-            if (string.IsNullOrEmpty(familyId))
-                throw new ArgumentNullException(nameof(familyId));
 
-            return SendInvitationAsync(email, firstName, inviterId, familyId);
+            return SendInvitationAsync(email, firstName, inviterId);
         }
 
-        private async Task SendInvitationAsync(string email, string firstName, string inviterId, string familyId)
+        private async Task SendInvitationAsync(string email, string firstName, string inviterId)
         {
 			try
 			{
 				using (var unitOfWork = _unitOfWorkFactory.Create())
 				{
-					var family = await unitOfWork.FamilyRepository.GetAsync(familyId) ?? throw new ArgumentException(nameof(familyId));
 					var inviter = await unitOfWork.MemberRepository.GetAsync(inviterId) ?? throw new ArgumentException(nameof(inviterId));
+					var family = await unitOfWork.FamilyRepository.GetAsync(inviter.FamilyId) ?? throw new ArgumentException(nameof(inviter.FamilyId));
 
 					var invitation = new Data.Models.Invitation()
 					{
@@ -55,8 +57,11 @@ namespace HouseholdPlanner.Services
 					};
 
 					unitOfWork.InvitationRepository.Add(invitation);
-
 					await unitOfWork.SaveAsync();
+
+					var encodedEmail = Convert.ToBase64String(Encoding.UTF8.GetBytes(email));
+					var acceptInvitationUri = $"{_applicationSettings.ApplicationUrl}/accounts/AcceptInvitation?d={invitation.Id}&m={encodedEmail}";
+					await _emailService.SendInvitation(email, firstName, inviter.FirstName, family.Name, acceptInvitationUri);
 				}
 			}
 			catch(Exception ex)
