@@ -1,6 +1,7 @@
 ﻿using HouseholdPlanner.Contracts.Notification;
 using HouseholdPlanner.Contracts.Services;
 using HouseholdPlanner.Data.Contracts;
+using HouseholdPlanner.Models.Domain;
 using HouseholdPlanner.Models.Options;
 using Microsoft.Extensions.Logging;
 using System;
@@ -27,7 +28,43 @@ namespace HouseholdPlanner.Services
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task SendInvitation(string email, string firstName, string inviterId)
+		public Task<Invitation> GetInvitation(string invitationId)
+		{
+			if (string.IsNullOrEmpty(invitationId))
+				throw new ArgumentNullException(nameof(invitationId));
+
+			return GetInvitationAsync(invitationId);
+		}
+
+		private async Task<Invitation> GetInvitationAsync(string invitationId)
+		{
+			try
+			{
+				using (var unitOfWork = _unitOfWorkFactory.Create())
+				{
+					var invitation = await unitOfWork.InvitationRepository.GetAsync(invitationId);
+
+					var domainInvitation = new Invitation()
+					{
+						Id = invitation.Id,
+						Email = invitation.Email,
+						FirstName = invitation.FirstName,
+						Used = invitation.Used,
+						FamilyId = invitation.FamilyId,
+						InviterId = invitation.MemberId
+					};
+
+					return domainInvitation;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				throw;
+			}
+		}
+
+		public Task SendInvitation(string email, string firstName, string inviterId)
         {
             if (string.IsNullOrEmpty(email))
                 throw new ArgumentNullException(nameof(email));
@@ -52,6 +89,7 @@ namespace HouseholdPlanner.Services
 					{
 						Email = email,
 						FirstName = firstName,
+						Used = false,
 						Family = family,
 						Member = inviter
 					};
@@ -70,5 +108,38 @@ namespace HouseholdPlanner.Services
 				throw;
 			}
         }
-    }
+
+		public Task AcceptInvitation(string userId, string invitationId)
+		{
+			if (string.IsNullOrEmpty(userId))
+				throw new ArgumentNullException(nameof(userId));
+			if (string.IsNullOrEmpty(invitationId))
+				throw new ArgumentNullException(nameof(invitationId));
+
+			return AcceptInvitationAsync(userId, invitationId);
+		}
+
+		private async Task AcceptInvitationAsync(string userId, string invitationId)
+		{
+			try
+			{
+				using (var unitOfWork = _unitOfWorkFactory.Create())
+				{
+					var invitation = await unitOfWork.InvitationRepository.GetAsync(invitationId);
+					var user = await unitOfWork.MemberRepository.GetAsync(userId);
+					var family = await unitOfWork.FamilyRepository.GetAsync(invitation.FamilyId);
+
+					family.Members.Add(user);
+					invitation.Used = true;
+
+					await unitOfWork.SaveAsync();
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				throw;
+			}
+		}
+	}
 }
