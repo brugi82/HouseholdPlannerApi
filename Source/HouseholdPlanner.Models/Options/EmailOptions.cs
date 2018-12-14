@@ -14,5 +14,6 @@ namespace HouseholdPlanner.Models.Options
         public string ReplyToName { get; set; }
         public string WelcomeTemplateName { get; set; }
         public string RegisterTemplateName { get; set; }
+		public string InvitationTempateName { get; set; }
     }
 }

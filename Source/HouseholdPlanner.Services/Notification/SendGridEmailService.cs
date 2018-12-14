@@ -39,7 +39,13 @@ namespace HouseholdPlanner.Services.Notification
             await SendEmail(emailContents);
         }
 
-        private async Task<string> GetRegistrationEmailContent(string to, string registrationLink)
+		public async Task SendInvitation(string to, string name, string inviterName, string familyName, string registrationLink)
+		{
+			string emailContents = await GetInvitationEmailContent(to, name, inviterName, familyName, registrationLink);
+			await SendEmail(emailContents);
+		}
+
+		private async Task<string> GetRegistrationEmailContent(string to, string registrationLink)
         {
             var emailContents = await _fileService.GetFileContentAsync(System.IO.Path.Combine(EmailTemplates, _emailOptions.RegisterTemplateName));
             emailContents = emailContents.Replace("__toEmail__", to);
@@ -57,7 +63,19 @@ namespace HouseholdPlanner.Services.Notification
             return emailContents;
         }
 
-        private void SetupHttpClient()
+		private async Task<string> GetInvitationEmailContent(string to, string name, string inviterName, string familyName, string registrationLink)
+		{
+			var emailContents = await _fileService.GetFileContentAsync(System.IO.Path.Combine(EmailTemplates, _emailOptions.InvitationTempateName));
+			emailContents = emailContents.Replace("__toEmail__", to);
+			emailContents = emailContents.Replace("__inviterName__", inviterName);
+			emailContents = emailContents.Replace("__familyName__", familyName);
+			emailContents = emailContents.Replace("__name__", name);
+			emailContents = emailContents.Replace("__confirmEmailLink__", System.Web.HttpUtility.UrlEncode(registrationLink));
+			emailContents = emailContents.Replace("__fromEmail__", _emailOptions.FromEmail);
+			return emailContents;
+		}
+
+		private void SetupHttpClient()
         {
             _httpClient.DefaultRequestHeaders.Clear();
 
@@ -70,5 +88,5 @@ namespace HouseholdPlanner.Services.Notification
             SetupHttpClient();
             var response = await _httpClient.PostAsync(_sendGridOptions.ApiUrl, new StringContent(emailContent));
         }
-    }
+	}
 }

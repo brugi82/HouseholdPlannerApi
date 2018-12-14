@@ -9,5 +9,6 @@ namespace HouseholdPlanner.Models.Options
     public class ApplicationSettings
     {
 		public string ApplicationUrl { get; set; }
+		public string ApiUrl { get; set; }
 	}
 }

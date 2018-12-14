@@ -45,6 +45,5 @@ namespace HouseholdPlannerApi.Controllers
 				return BadRequest();
 			}
 		}
-
 	}
 }

@@ -10,5 +10,6 @@ namespace HouseholdPlanner.Contracts.Notification
     {
         Task SendRegistrationEmail(string to, string registrationLink);
         Task SendWelcomeEmail(string to, string name);
+		Task SendInvitation(string to, string name, string inviterName, string familyName, string registrationLink);
     }
 }

@@ -1,0 +1,11 @@
+{
+  "personalizations": [ { "to": [ { "email": "__toEmail__" } ] } ],
+  "from": { "email": "__fromEmail__" },
+  "subject": "You have been invited by __inviterName__ to join __familyName__ family on Household Planner",
+  "content": [
+    {
+      "type": "text/html",
+      "value": "<h2>Hello __name__,</h2><br/><h4>You have been invited by __inviterName__ to join __familyName__ family on Household Planner.</h4><br/><h4>Confirm your email address and complete Household Planner registration by visiting <a href=\"__confirmEmailLink__\">this</a> link.</h4>"
+    }
+  ]
+}
