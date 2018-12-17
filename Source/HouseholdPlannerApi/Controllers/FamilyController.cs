@@ -13,7 +13,7 @@ namespace HouseholdPlannerApi.Controllers
 {
 	[Route("api/[controller]/[action]")]
 	[ApiController]
-	public class FamilyController: ControllerBase
+	public class FamilyController: BaseController
     {
 		private readonly IFamilyService _familyService;
 		private readonly ILogger<FamilyController> _logger;
@@ -32,8 +32,7 @@ namespace HouseholdPlannerApi.Controllers
 
 			try
 			{
-				var idClaim = User.Claims.Single(c => c.Type == JwtConstants.JwtClaimIdentifiers.Id);
-				var userId = idClaim.Value;
+				var userId = GetCurrentUserId();
 
 				await _familyService.Add(userId, familyModel.Name, familyModel.Description);
 
