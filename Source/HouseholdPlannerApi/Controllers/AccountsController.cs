@@ -47,6 +47,25 @@ namespace HouseholdPlannerApi.Controllers
             }
         }
 
+		[HttpPost]
+		public async Task<IActionResult> RegisterInvitedUser([FromBody]RegisterInvitationModel registerInvitationModel)
+		{
+			if (registerInvitationModel == null)
+				return BadRequest();
+
+			try
+			{
+				await _userService.RegisterInvitedUser(registerInvitationModel);
+
+				return Ok();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return BadRequest();
+			}
+		}
+
         [HttpGet]
         public async Task<IActionResult> ConfirmEmail([Bind(Prefix ="i")] string userId, [Bind(Prefix = "o")] string token)
         {

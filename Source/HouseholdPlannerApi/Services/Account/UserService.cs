@@ -20,22 +20,27 @@ namespace HouseholdPlannerApi.Services.Account
         private readonly ITokenFactory _tokenFactory;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
+		private readonly IInvitationService _invitationService;
 		private readonly ApplicationSettings _applicationSettings;
 		private readonly IMemberService _memberService;
 
 		public UserService(UserManager<ApplicationUser> userManager, IEmailService emailService, ITokenFactory tokenFactory,
-            IMemberService memberService, ApplicationSettings applicationSettings, ILogger<UserService> logger)
+            IMemberService memberService, IInvitationService invitationService, ApplicationSettings applicationSettings, 
+			ILogger<UserService> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _tokenFactory = tokenFactory ?? throw new ArgumentNullException(nameof(tokenFactory));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+			_invitationService = invitationService ?? throw new ArgumentNullException(nameof(invitationService));
 			_applicationSettings = applicationSettings ?? throw new ArgumentNullException(nameof(applicationSettings));
 			_memberService = memberService ?? throw new ArgumentNullException(nameof(memberService));
         }
 
         public Task RegisterUser(RegistrationModel registrationModel)
         {
+			if (registrationModel == null)
+				throw new ArgumentNullException(nameof(registrationModel));
 			if (string.IsNullOrEmpty(registrationModel.FirstName))
 				throw new ArgumentNullException(nameof(registrationModel.FirstName));
 			if(string.IsNullOrEmpty(registrationModel.Username))
@@ -48,18 +53,24 @@ namespace HouseholdPlannerApi.Services.Account
 
 		private async Task RegisterUserAsync(RegistrationModel registrationModel)
 		{
-			var createResult = IdentityResult.Success;
+			var newUser = await CreateNewUser(registrationModel);
+			await SendConfirmationEmail(newUser);
+		}
+
+		private async Task<ApplicationUser> CreateNewUser(RegistrationModel registrationModel)
+		{
 			var user = await _userManager.FindByEmailAsync(registrationModel.Username);
 			if (user == null)
 			{
 				user = MapToNewUser(registrationModel);
-				createResult = await _userManager.CreateAsync(user, registrationModel.Password);
+				var createResult = await _userManager.CreateAsync(user, registrationModel.Password);
+				if (!createResult.Succeeded)
+					ProcessErrors("Creating new user failed.", createResult);
 			}
-
-			if (createResult.Succeeded)
-				await SendConfirmationEmail(user);
 			else
-				ProcessErrors(nameof(RegisterUser), createResult);
+				throw new InvalidOperationException($"Unable to create user with email {registrationModel.Username} as it already exists.");
+
+			return user;
 		}
 
 		public Task ConfirmEmail(string userId, string token)
@@ -80,8 +91,7 @@ namespace HouseholdPlannerApi.Services.Account
 				var confirmEmailResult = await _userManager.ConfirmEmailAsync(user, token);
 				if (confirmEmailResult.Succeeded)
 				{
-					await _memberService.Add(user.Id, user.FirstName, user.LastName);
-					await _emailService.SendWelcomeEmail(user.Email, user.FirstName);
+					await CreateNewMember(user);
 				}
 				else
 					ProcessErrors(nameof(ConfirmEmail), confirmEmailResult);
@@ -90,7 +100,13 @@ namespace HouseholdPlannerApi.Services.Account
 				ProcessErrors("", IdentityResult.Failed(new IdentityError() { Description = $"Unable to confirm email. User with id {userId} not found." }));
 		}
 
-        public Task<string> GetAccessToken(LoginModel loginModel)
+		private async Task CreateNewMember(ApplicationUser user)
+		{
+			await _memberService.Add(user.Id, user.FirstName, user.LastName);
+			await _emailService.SendWelcomeEmail(user.Email, user.FirstName);
+		}
+
+		public Task<string> GetAccessToken(LoginModel loginModel)
         {
             if (loginModel == null)
                 throw new ArgumentNullException(nameof(loginModel));
@@ -141,5 +157,35 @@ namespace HouseholdPlannerApi.Services.Account
 
             throw new InvalidOperationException(description);
         }
-    }
+
+		public Task RegisterInvitedUser(RegisterInvitationModel registerInvitationModel)
+		{
+			if (registerInvitationModel == null)
+				throw new ArgumentNullException(nameof(registerInvitationModel));
+			if (string.IsNullOrEmpty(registerInvitationModel.FirstName))
+				throw new ArgumentNullException(nameof(registerInvitationModel.FirstName));
+			if (string.IsNullOrEmpty(registerInvitationModel.Username))
+				throw new ArgumentNullException(nameof(registerInvitationModel.Username));
+			if (string.IsNullOrEmpty(registerInvitationModel.Password))
+				throw new ArgumentNullException(nameof(registerInvitationModel.Password));
+			if (string.IsNullOrEmpty(registerInvitationModel.InvitationId))
+				throw new ArgumentNullException(nameof(registerInvitationModel.InvitationId));
+
+			return RegisterInvitedUserAsync(registerInvitationModel);
+		}
+
+		private async Task RegisterInvitedUserAsync(RegisterInvitationModel registerInvitationModel)
+		{
+			var invitation = await _invitationService.GetInvitation(registerInvitationModel.InvitationId);
+			if (!invitation.Used)
+			{
+				var newUser = await CreateNewUser(registerInvitationModel);
+				await CreateNewMember(newUser);
+
+				await _invitationService.AcceptInvitation(newUser.Id, registerInvitationModel.InvitationId);
+			}
+			else
+				throw new InvalidOperationException($"Unable to register user. Invitation with id {registerInvitationModel.InvitationId} was already used.");
+		}
+	}
 }
