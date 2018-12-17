@@ -1,0 +1,56 @@
+﻿using HouseholdPlanner.Contracts.Services;
+using HouseholdPlanner.Data.Contracts;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace HouseholdPlanner.Services
+{
+	public class HouseholdTaskService : IHouseholdTaskService
+	{
+		private readonly IUnitOfWorkFactory _unitOfWorkFactory;
+		private readonly ILogger<HouseholdTaskService> _logger;
+
+		public HouseholdTaskService(IUnitOfWorkFactory unitOfWorkFactory, ILogger<HouseholdTaskService> logger)
+		{
+			_unitOfWorkFactory = unitOfWorkFactory ?? throw new ArgumentNullException(nameof(unitOfWorkFactory));
+			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
+		}
+
+		public Task Add(string userId, string title, string description)
+		{
+			if (string.IsNullOrEmpty(userId))
+				throw new ArgumentNullException(nameof(userId));
+			if (string.IsNullOrEmpty(title))
+				throw new ArgumentNullException(nameof(title));
+
+			return AddAsync(userId, title, description);
+		}
+
+		private async Task AddAsync(string userId, string title, string description)
+		{
+			try
+			{
+				using (var unitOfWork = _unitOfWorkFactory.Create())
+				{
+					var user = await unitOfWork.MemberRepository.GetAsync(userId);
+
+					var newTask = new Data.Models.HouseholdTask()
+					{
+						Title = title,
+						Description = description
+					};
+					unitOfWork.HouseholdTaskRepository.Add(null);
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				throw;
+			}
+		}
+	}
+}

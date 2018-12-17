@@ -24,13 +24,15 @@ namespace HouseholdPlanner.Data.EntityFramework.Repositories
             MemberRepository = _repositoryFactory.CreateRepository<IMemberRepository>(new object[] { _dbContext });
             FamilyRepository = _repositoryFactory.CreateRepository<IFamilyRepository>(new object[] { _dbContext });
             InvitationRepository = _repositoryFactory.CreateRepository<IInvitationRepository>(new object[] { _dbContext });
+			HouseholdTaskRepository = _repositoryFactory.CreateRepository<IHouseholdTaskRepository>(new object[] { _dbContext });
         }
 
         public IMemberRepository MemberRepository { get; private set; }
         public IFamilyRepository FamilyRepository { get; private set; }
         public IInvitationRepository InvitationRepository { get; private set; }
+		public IHouseholdTaskRepository HouseholdTaskRepository { get; private set; }
 
-        public void Dispose()
+		public void Dispose()
         {
 			_dbContext.Dispose();
         }
