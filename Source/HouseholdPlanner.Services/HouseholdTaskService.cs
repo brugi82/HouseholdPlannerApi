@@ -36,14 +36,22 @@ namespace HouseholdPlanner.Services
 			{
 				using (var unitOfWork = _unitOfWorkFactory.Create())
 				{
-					var user = await unitOfWork.MemberRepository.GetAsync(userId);
+					var user = await unitOfWork.MemberRepository.GetAsync(userId) ?? throw new ArgumentException($"User with id: {userId} not found.");
+					var family = await unitOfWork.FamilyRepository.GetAsync(user.FamilyId) ?? throw new ArgumentException($"Family with id: {user.FamilyId} not found.");
 
 					var newTask = new Data.Models.HouseholdTask()
 					{
 						Title = title,
-						Description = description
+						Description = description,
+						CreatedBy = user,
+						UpdatedBy = user,
+						Created = DateTime.Now,
+						Updated = DateTime.Now,
+						Family = family
 					};
-					unitOfWork.HouseholdTaskRepository.Add(null);
+					unitOfWork.HouseholdTaskRepository.Add(newTask);
+
+					await unitOfWork.SaveAsync();
 				}
 			}
 			catch (Exception ex)
