@@ -79,6 +79,7 @@ namespace HouseholdPlannerApi
 			services.AddTransient<IFamilyService, FamilyService>();
 			services.AddTransient<IMemberService, MemberService>();
             services.AddTransient<IInvitationService, InvitationService>();
+			services.AddTransient<IHouseholdTaskService, HouseholdTaskService>();
 			services.AddTransient<IFileService, FileService>();
 			services.AddTransient<IEmailService, SendGridEmailService>();
 			services.AddTransient<ITokenFactory, TokenFactory>();

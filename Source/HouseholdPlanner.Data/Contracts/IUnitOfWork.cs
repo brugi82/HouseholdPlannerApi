@@ -11,7 +11,8 @@ namespace HouseholdPlanner.Data.Contracts
         IMemberRepository MemberRepository { get; }
         IFamilyRepository FamilyRepository { get; }
         IInvitationRepository InvitationRepository { get; }
+		IHouseholdTaskRepository HouseholdTaskRepository { get; }
 
-        Task SaveAsync();
+		Task SaveAsync();
     }
 }

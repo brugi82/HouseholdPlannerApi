@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 namespace HouseholdPlannerApi.Controllers
 {
 	[Route("api/[controller]/[action]")]
+	[ApiController]
 	public class InvitationController: BaseController
 	{
 		private readonly IInvitationService _invitationService;
