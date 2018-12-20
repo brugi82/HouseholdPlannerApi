@@ -42,5 +42,23 @@ namespace HouseholdPlannerApi.Controllers
 				return BadRequest();
 			}
 		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetFamilyTasks()
+		{
+			try
+			{
+				var userId = GetCurrentUserId();
+
+				var tasks = await _householdTaskService.GetUsersFamilyTasks(userId);
+
+				return Ok(tasks);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				return BadRequest();
+			}
+		}
 	}
 }
