@@ -9,6 +9,7 @@ namespace HouseholdPlanner.Data.Contracts
 {
     public interface IHouseholdTaskRepository: IRepository<HouseholdTask>
     {
-        
+		Task<IEnumerable<HouseholdTask>> GetFamilyTasks(string familyId);
+		Task<IEnumerable<HouseholdTask>> GetUsersFamilyTasks(string userId);
     }
 }

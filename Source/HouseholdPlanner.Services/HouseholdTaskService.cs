@@ -1,5 +1,6 @@
 ﻿using HouseholdPlanner.Contracts.Services;
 using HouseholdPlanner.Data.Contracts;
+using HouseholdPlanner.Models.Domain;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,36 @@ namespace HouseholdPlanner.Services
 				throw new ArgumentNullException(nameof(title));
 
 			return AddAsync(userId, title, description);
+		}
+
+		public async Task<IEnumerable<HouseholdTask>> GetUsersFamilyTasks(string userId)
+		{
+			try
+			{
+				using (var unitOfWork = _unitOfWorkFactory.Create())
+				{
+					var dataTasks = await unitOfWork.HouseholdTaskRepository.GetUsersFamilyTasks(userId);
+					var tasks = dataTasks.Select(t => new HouseholdTask()
+					{
+						Id = t.Id,
+						Title = t.Title,
+						Description = t.Description,
+						Created = t.Created,
+						CreatedById = t.CreatedById,
+						Updated = t.Updated,
+						UpdatedById = t.UpdatedById,
+						AssignedToId = t.AssignedToId,
+						FamilyId = t.FamilyId
+					});
+
+					return tasks;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex.Message);
+				throw;
+			}
 		}
 
 		private async Task AddAsync(string userId, string title, string description)
