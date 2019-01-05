@@ -2,6 +2,7 @@
 using HouseholdPlannerApi.Models;
 using HouseholdPlannerApi.Services;
 using HouseholdPlannerApi.Services.Account;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,6 +15,7 @@ using System.Web;
 namespace HouseholdPlannerApi.Controllers
 {
     [Route("api/[controller]/[action]")]
+    [EnableCors("SiteCorsPolicy")]
     [ApiController]
     public class AccountsController:ControllerBase
     {
