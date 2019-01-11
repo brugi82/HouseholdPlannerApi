@@ -3,6 +3,7 @@ using HouseholdPlanner.Contracts.Notification;
 using HouseholdPlanner.Models.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -47,16 +48,16 @@ namespace HouseholdPlanner.Services.Notification
 
 		private async Task<string> GetRegistrationEmailContent(string to, string registrationLink)
         {
-            var emailContents = await _fileService.GetFileContentAsync(System.IO.Path.Combine(EmailTemplates, _emailOptions.RegisterTemplateName));
+            var emailContents = await _fileService.GetFileContentAsync(GetTemplatePath(_emailOptions.RegisterTemplateName));
             emailContents = emailContents.Replace("__toEmail__", to);
             emailContents = emailContents.Replace("__fromEmail__", _emailOptions.FromEmail);
-            emailContents = emailContents.Replace("__confirmEmailLink__", System.Web.HttpUtility.UrlEncode(registrationLink));
+			emailContents = emailContents.Replace("__confirmEmailLink__", System.Web.HttpUtility.UrlEncode(registrationLink));
             return emailContents;
         }
 
         private async Task<string> GetWelcomeEmailContent(string to, string name)
         {
-            var emailContents = await _fileService.GetFileContentAsync(System.IO.Path.Combine(EmailTemplates, _emailOptions.WelcomeTemplateName));
+            var emailContents = await _fileService.GetFileContentAsync(GetTemplatePath(_emailOptions.WelcomeTemplateName));
             emailContents = emailContents.Replace("__toEmail__", to);
             emailContents = emailContents.Replace("__name__", name);
             emailContents = emailContents.Replace("__fromEmail__", _emailOptions.FromEmail);
@@ -65,7 +66,7 @@ namespace HouseholdPlanner.Services.Notification
 
 		private async Task<string> GetInvitationEmailContent(string to, string name, string inviterName, string familyName, string registrationLink)
 		{
-			var emailContents = await _fileService.GetFileContentAsync(System.IO.Path.Combine(EmailTemplates, _emailOptions.InvitationTempateName));
+			var emailContents = await _fileService.GetFileContentAsync(GetTemplatePath(_emailOptions.InvitationTempateName));
 			emailContents = emailContents.Replace("__toEmail__", to);
 			emailContents = emailContents.Replace("__inviterName__", inviterName);
 			emailContents = emailContents.Replace("__familyName__", familyName);
@@ -79,14 +80,19 @@ namespace HouseholdPlanner.Services.Notification
         {
             _httpClient.DefaultRequestHeaders.Clear();
 
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_sendGridOptions.SendGridApiKey}");
-            _httpClient.DefaultRequestHeaders.Add("Content", "application/json");
+			_httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_sendGridOptions.SendGridApiKey}");
         }
 
         private async Task SendEmail(string emailContent)
         {
             SetupHttpClient();
-            var response = await _httpClient.PostAsync(_sendGridOptions.ApiUrl, new StringContent(emailContent));
+            var response = await _httpClient.PostAsync(_sendGridOptions.ApiUrl, new StringContent(emailContent, Encoding.UTF8, "application/json"));
         }
+
+		private string GetTemplatePath(string templateName)
+		{
+			var currentDir = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+			return Path.Combine(currentDir, EmailTemplates, templateName);
+		}
 	}
 }

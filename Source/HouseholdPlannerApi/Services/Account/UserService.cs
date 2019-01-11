@@ -137,6 +137,7 @@ namespace HouseholdPlannerApi.Services.Account
         {
             return new ApplicationUser()
             {
+				UserName = registrationModel.Username,
                 Email = registrationModel.Username,
                 FirstName = registrationModel.FirstName,
                 LastName = registrationModel.LastName

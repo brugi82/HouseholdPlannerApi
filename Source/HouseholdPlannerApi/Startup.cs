@@ -19,6 +19,7 @@ using HouseholdPlannerApi.Services.Account;
 using HouseholdPlannerApi.Services.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +46,7 @@ namespace HouseholdPlannerApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            var sendGridApiKey = Environment.GetEnvironmentVariable("HouseholdPlannerApiKeySendgrid");
+			var sendGridApiKey = Environment.GetEnvironmentVariable("HouseholdPlannerApiKeySendgrid");
             var key = Environment.GetEnvironmentVariable("HouseholdPlannerApiKey");
             var sqlPassword = Environment.GetEnvironmentVariable("SqlServerPassword");
             var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key));
@@ -128,7 +129,28 @@ namespace HouseholdPlannerApi
 
 			var contextFactory = new DbContextFactory(connectionString);
 			services.AddSingleton<IDbContextFactory<ApplicationDbContext>>(contextFactory);
-		}
+
+            services.AddDefaultIdentity<HouseholdPlanner.Data.EntityFramework.Models.ApplicationUser>(options =>
+			{
+				options.Password.RequiredLength = 1;
+				options.Password.RequireNonAlphanumeric = false;
+				options.Password.RequireDigit = false;
+				options.Password.RequireUppercase = false;
+				options.Password.RequireLowercase = false;
+			}).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            var corsBuilder = new CorsPolicyBuilder();
+            corsBuilder.AllowAnyHeader();
+            corsBuilder.AllowAnyMethod();
+            corsBuilder.AllowAnyOrigin(); // For anyone access.
+            //corsBuilder.WithOrigins("http://localhost:56573"); // for a specific url. Don't add a forward slash on the end!
+            corsBuilder.AllowCredentials();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("SiteCorsPolicy", corsBuilder.Build());
+            });
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -144,6 +166,7 @@ namespace HouseholdPlannerApi
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors("SiteCorsPolicy");
         }
     }
 }
