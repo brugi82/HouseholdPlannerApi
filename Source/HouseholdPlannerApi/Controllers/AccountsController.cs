@@ -30,6 +30,7 @@ namespace HouseholdPlannerApi.Controllers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
+		[EnableCors("SiteCorsPolicy")]
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody]RegistrationModel registrationModel)
         {

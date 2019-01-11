@@ -12,7 +12,7 @@ namespace HouseholdPlanner.Services.Common
     {
         public async Task<string> GetFileContentAsync(string path)
         {
-            var content = await File.ReadAllTextAsync(path);
+			var content = await File.ReadAllTextAsync(path);
             return content;
         }
     }
