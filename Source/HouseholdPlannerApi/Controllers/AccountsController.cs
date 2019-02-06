@@ -85,14 +85,15 @@ namespace HouseholdPlannerApi.Controllers
 			}
         }
 
-        [HttpPost]
+		[EnableCors("SiteCorsPolicy")]
+		[HttpPost]
         public async Task<IActionResult> Login(LoginModel loginModel)
         {
             try
             {
-                var accessToken = await _userService.GetAccessToken(loginModel);
+                var userModel = await _userService.LoginUser(loginModel);
 
-                return Ok(accessToken);
+                return Ok(userModel);
             }
             catch (Exception ex)
             {

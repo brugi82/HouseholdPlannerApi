@@ -106,26 +106,38 @@ namespace HouseholdPlannerApi.Services.Account
 			await _emailService.SendWelcomeEmail(user.Email, user.FirstName);
 		}
 
-		public Task<string> GetAccessToken(LoginModel loginModel)
-        {
-            if (loginModel == null)
-                throw new ArgumentNullException(nameof(loginModel));
-            if (string.IsNullOrEmpty(loginModel.Username))
-                throw new ArgumentNullException(nameof(loginModel.Username));
-            if (string.IsNullOrEmpty(loginModel.Password))
-                throw new ArgumentNullException(nameof(loginModel.Password));
+		public Task<UserModel> LoginUser(LoginModel loginModel)
+		{
+			if (loginModel == null)
+				throw new ArgumentNullException(nameof(loginModel));
+			if (string.IsNullOrEmpty(loginModel.Username))
+				throw new ArgumentNullException(nameof(loginModel.Username));
+			if (string.IsNullOrEmpty(loginModel.Password))
+				throw new ArgumentNullException(nameof(loginModel.Password));
 
-			return GetAccessTokenAsync(loginModel);
-        }
+			return LoginUserAsync(loginModel);
+		}
 
-		private async Task<string> GetAccessTokenAsync(LoginModel loginModel)
+		private async Task<UserModel> LoginUserAsync(LoginModel loginModel)
 		{
 			var user = await _userManager.FindByEmailAsync(loginModel.Username);
 			if (user != null)
 			{
 				var validCredentials = await _userManager.CheckPasswordAsync(user, loginModel.Password);
 				if (validCredentials)
-					return _tokenFactory.GenerateJwtToken(user.Email, user.Id);
+				{
+					var token = _tokenFactory.GenerateJwtToken(user.Email, user.Id);
+					var userModel = new UserModel()
+					{
+						Id = user.Id,
+						FirstName = user.FirstName,
+						LastName = user.LastName,
+						UserName = user.UserName,
+						Token = token
+					};
+
+					return userModel;
+				}
 				else
 					throw new ArgumentException("Invalid username or password.");
 			}

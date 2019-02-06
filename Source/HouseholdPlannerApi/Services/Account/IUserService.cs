@@ -12,6 +12,6 @@ namespace HouseholdPlannerApi.Services.Account
         Task RegisterUser(RegistrationModel registrationModel);
 		Task RegisterInvitedUser(RegisterInvitationModel registerInvitationModel);
 		Task ConfirmEmail(string userId, string token);
-        Task<string> GetAccessToken(LoginModel loginModel);
+		Task<UserModel> LoginUser(LoginModel loginModel);
     }
 }
