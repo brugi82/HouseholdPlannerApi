@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -69,19 +70,20 @@ namespace HouseholdPlannerApi.Controllers
 			}
 		}
 
-        [HttpGet]
-        public async Task<IActionResult> ConfirmEmail([Bind(Prefix ="i")] string userId, [Bind(Prefix = "o")] string token)
+		[EnableCors("SiteCorsPolicy")]
+		[HttpPost]
+		public async Task<IActionResult> ConfirmEmail([Bind(Prefix ="i")] string userId, [Bind(Prefix = "o")] string token)
         {
 			try
 			{
-				await _userService.ConfirmEmail(userId, HttpUtility.UrlDecode(token));
+				await _userService.ConfirmEmail(userId, token);
 
 				return Ok();
 			}
 			catch (Exception ex)
 			{
 				_logger.LogError(ex.Message);
-				return BadRequest();
+				return BadRequest(new JsonResult(ex.Message));
 			}
         }
 

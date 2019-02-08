@@ -159,16 +159,21 @@ namespace HouseholdPlannerApi.Services.Account
         private async Task SendConfirmationEmail(ApplicationUser user)
         {
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmEmailUrl = $"{_applicationSettings.ApplicationUrl}api/accounts/ConfirmEmail?i={user.Id}&o={token}";
+			var encodedToken = System.Web.HttpUtility.UrlEncode(token);
+			var confirmEmailUrl = $"{_applicationSettings.ApplicationUrl}/ConfirmEmail/{user.Id}/{encodedToken}";
             await _emailService.SendRegistrationEmail(user.UserName, confirmEmailUrl);
         }
 
-        private void ProcessErrors(string description, IdentityResult createResult)
+        private void ProcessErrors(string description, IdentityResult identityResult)
         {
-            foreach (var error in createResult.Errors)
-                _logger.LogError($"{description} Code:{error.Code} Description:{error.Description}");
+			var identityErrors = new StringBuilder();
+			foreach (var error in identityResult.Errors)
+			{
+				identityErrors.AppendLine(error.Description);
+				_logger.LogError($"{description} Code:{error.Code} Description:{error.Description}");
+			}
 
-            throw new InvalidOperationException(description);
+            throw new InvalidOperationException(string.IsNullOrEmpty(identityErrors.ToString()) ? description : identityErrors.ToString());
         }
 
 		public Task RegisterInvitedUser(RegisterInvitationModel registerInvitationModel)
